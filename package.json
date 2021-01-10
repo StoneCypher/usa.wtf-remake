@@ -4,13 +4,14 @@
   "description": "Remake of 2600's https://usa.wtf/ with video",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf -f build && mkdir build && rimraf -f docs && mkdir docs && cp src/favicon.png docs && cp src/index.css docs",
+    "clean": "rimraf -f build && mkdir build && rimraf -f docs && mkdir docs && cp src/assets/* docs",
     "peg_representatives": "pegjs -o build/peg_representatives.js src/peg_representatives.pegjs",
     "peg_senators": "pegjs -o build/peg_senators.js src/peg_senators.pegjs",
     "pegjs": "npm run peg_representatives && npm run peg_senators",
     "parse": "node src/host_parsers.js",
     "newsite": "node src/newsite.js",
-    "build": "npm run clean && npm run pegjs && npm run parse && npm run newsite",
+    "css": "cp src/index.css docs",
+    "build": "npm run clean && npm run pegjs && npm run parse && npm run newsite && npm run css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

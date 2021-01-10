@@ -84,7 +84,38 @@ function billboard_senator(this_senator) {
 
 
 function summarize_senator(this_senator) {
-  return `<div>${this_senator.senator} of ${this_senator.state}</div>`
+  return `<div>${this_senator.senator} of ${this_senator.state}</div>`;
+}
+
+
+
+function billboard_representative(this_representative) {
+  return `
+<div>
+  <h1>${this_representative.representative} of ${this_representative.state}</h1>
+  <h2>Offices:</h2>
+  <ol>
+    ${this_representative.office.map(single_office => `
+    <li>
+      <div>
+        ${single_office.addr.map(a => `<div>${a}</div>`).join('')}
+      </div>${single_office.phone
+        ? single_office.phone.map(p => `<div>Phone: ${p}</div>`).join('')
+        : ''
+      }${single_office.fax
+        ? single_office.fax.map(f => `<div>Fax: ${f}</div>`).join('')
+        : ''
+      }
+    </li>`
+    ).join('')}
+  </ol>
+</div>`.trim();
+}
+
+
+
+function summarize_representative(this_representative) {
+  return `<div>${this_representative.senator} of ${this_representative.state}</div>`;
 }
 
 

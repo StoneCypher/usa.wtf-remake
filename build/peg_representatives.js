@@ -174,7 +174,7 @@ function peg$parse(input, options) {
       peg$c26 = peg$literalExpectation("</p>", false),
       peg$c27 = function(d1, d2, d3, d4, d5, d6, d7, d8, d9, d0, val) { return {
           kind : 'phone',
-          val  : `(${d1}${d2}${d3}) ${d3}${d3}${d3}-${d3}${d3}${d3}${d3}`
+          val  : `(${d1}${d2}${d3}) ${d4}${d5}${d6}-${d7}${d8}${d9}${d0}`
         } },
       peg$c28 = "<p>Fax: ",
       peg$c29 = peg$literalExpectation("<p>Fax: ", false),

@@ -5,7 +5,8 @@ const preface  = fs.readFileSync('./src/preface.html'),
       prologue = fs.readFileSync('./src/prologue.html'),
       postface = fs.readFileSync('./src/postface.html');
 
-const data = require('../build/data.js');
+const data   = require('../build/data.js'),
+      photos = require('./photos.js');
 
 
 
@@ -14,9 +15,15 @@ const sen_header = '    <h1><a name="senators"></a>These are the eight senators 
 
 
 
-const the_states = {};
-data.representatives.forEach(rep => the_states[rep.state] = true);
-data.senators.forEach(       sen => the_states[sen.state] = true);
+const the_states   = {},
+      the_states_r = {},
+      the_states_s = {};
+
+data.representatives.forEach(rep => the_states[rep.state] = (the_states[rep.state] || 0) + 1);
+data.senators.forEach(       sen => the_states[sen.state] = (the_states[sen.state] || 0) + 1);
+
+data.representatives.forEach(rep => the_states_r[rep.state] = (the_states_r[rep.state] || 0) + 1);
+data.senators.forEach(       sen => the_states_s[sen.state] = (the_states_s[sen.state] || 0) + 1);
 
 
 
@@ -53,21 +60,27 @@ const header = for_state => {
 
   return `
       <div id="statelist">
-        <a href="index.html" class="all${maybe_all_current_class}">All states</a>
+        <div class="statebox all${maybe_all_current_class}">
+          <a href="index.html" class="all${maybe_all_current_class}">All states</a> (8s, 139r)
+        </div>
         ${ maybe_all_subrow }
         ${
         Object.keys(the_states)
               .sort()
               .map(sn =>
-                `        <a class="${sn.replace(' ', '_')}${
+                `        <div class="statebox${maybe_each_current_class(sn)}"><a class="${sn.replace(' ', '_')}${
                   maybe_each_current_class(sn)
                 }" href="${
                   fname_state(sn)
                 }">${
                   sn
-                }</a>${
+                }</a> (${[
+                  the_states_s[sn]? `${the_states_s[sn]}s`:'',
+                  the_states_r[sn]? `${the_states_r[sn]}r`:''
+                ].filter(Boolean)
+                 .join(', ')})${
                   maybe_each_subrow(sn)
-                }\n`)
+                }</div>\n`)
               .join(' ')
         }
       </div>
@@ -79,8 +92,9 @@ const header = for_state => {
 
 function billboard_senator(this_senator) {
   return `
-<div>
-  <h2>${this_senator.senator} of ${this_senator.state}</h2>
+<div class="billboard">
+  <img class="selfie" src="${photos.photos[this_senator.senator] || 'no-photo.png'}" />
+  <h2>Senator <span class="name">${this_senator.senator}</span> of ${this_senator.state}</h2>
   <h3>Offices:</h3>
   <ol>
     ${this_senator.office.map(single_office => `
@@ -88,10 +102,10 @@ function billboard_senator(this_senator) {
       <div>
         ${single_office.addr.map( (a, i) => `<div class="addr addr_${i}">${a}</div>`).join('')}
       </div>${single_office.phone
-        ? single_office.phone.map(p => `<div class="phone">Phone: ${p}</div>`).join('')
+        ? single_office.phone.map(p => `<div class="phone">Phone: <a href="tel:${p}">${p}</a></div>`).join('')
         : ''
       }${single_office.fax
-        ? single_office.fax.map(f => `<div class="fax">Fax: ${f}</div>`).join('')
+        ? single_office.fax.map(f => `<div class="fax">Fax: <a href="${f}">${f}</a></div>`).join('')
         : ''
       }
     </li>`
@@ -104,18 +118,23 @@ function billboard_senator(this_senator) {
 
 function summarize_senator(this_senator) {
   return `<div>
-  <span class="name senator">${this_senator.senator}</span>
-  of
-  <span class="${this_senator.state}">${this_senator.state}</span>
-  </div>`;
+  <span class="name senator">${this_senator.senator}</span> of <a href="${
+    fname_state(this_senator.state)
+  }">${
+    this_senator.state
+  }</a>
+</div>`;
 }
 
 
 
 function billboard_representative(this_representative) {
   return `
-<div>
-  <h2>${this_representative.representative} of ${this_representative.state}</h2>
+<div class="billboard">
+  <img class="selfie" src="${photos.photos[this_representative.representative] || 'no-photo.png'}" />
+  <h2>Representative <span class="name">${
+    this_representative.representative
+  }</span> of ${ this_representative.state }</h2>
   <h3>Offices:</h3>
   <ol>
     ${this_representative.office.map(single_office => `
@@ -124,10 +143,10 @@ function billboard_representative(this_representative) {
         ${single_office.addr.map( (a, i) =>
           `<div class="addr addr_${i}">${a}</div>`).join('') }
       </div>${single_office.phone
-        ? single_office.phone.map(p => `<div class="phone">Phone: ${p}</div>`).join('')
+        ? single_office.phone.map(p => `<div class="phone">Phone: <a href="tel:${p}">${p}</a></div>`).join('')
         : ''
       }${single_office.fax
-        ? single_office.fax.map(f => `<div class="fax">Fax: ${f}</div>`).join('')
+        ? single_office.fax.map(f => `<div class="fax">Fax: <a href="fax:${f}">${f}</a></div>`).join('')
         : ''
       }
     </li>`
@@ -139,7 +158,11 @@ function billboard_representative(this_representative) {
 
 
 function summarize_representative(this_representative) {
-  return `<div>${this_representative.representative} of ${this_representative.state}</div>`;
+  return `<div>${this_representative.representative} of <a href="${
+    fname_state(this_representative.state)
+  }">${
+    this_representative.state
+  }</a></div>`;
 }
 
 
@@ -166,7 +189,26 @@ function newsite() {
 
 function newsite_state(which_state) {
 
-  let prev_state = null;
+  let prev_state = null,
+      these_senator_results;
+
+  const these_senators = data.senators.filter(s => s.state === which_state);
+
+  these_senator_results = (these_senators.length)
+    ? these_senators
+        .map(this_sen => billboard_senator(this_sen))
+        .join('')
+    : `<h3 class="clean_senators">🎉 No ${which_state} senators were involved.</h3>`;
+
+
+  const these_representatives = data.representatives.filter(r => r.state === which_state);
+
+  these_representative_results = (these_representatives.length)
+    ? these_representatives
+        .map(this_rep => billboard_representative(this_rep))
+        .join('')
+    : `<h3 class="clean_representatives">🎉 No ${which_state} representatives were involved.</h3>`;
+
 
   return preface
        + header(which_state)
@@ -174,11 +216,8 @@ function newsite_state(which_state) {
        + prologue
        + sen_header
        + '<div class="this_state">'
-       + data.senators
-             .filter(s => s.state === which_state)
-             .map(this_sen => billboard_senator(this_sen))
-             .join('')
-       + '</div><div class="other_state">'
+       + these_senator_results
+       + `</div><div class="other_state"><h2>Senators from outside ${which_state}</h2>`
        + data.senators
              .filter(s => s.state !== which_state)
              .map(this_sen => summarize_senator(this_sen))
@@ -186,11 +225,8 @@ function newsite_state(which_state) {
        + '</div>'
        + rep_header
        + '<div class="this_state">'
-       + data.representatives
-             .filter(r => r.state === which_state)
-             .map(this_rep => billboard_representative(this_rep))
-             .join('')
-       + '</div><div class="other_state">'
+       + these_representative_results
+       + `</div><div class="other_state"><h2>Representatives from outside ${which_state}</h2>`
        + data.representatives
              .filter(r => r.state !== which_state)
              .map(this_rep => {

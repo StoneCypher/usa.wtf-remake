@@ -5,7 +5,7 @@
   --main-width           : 45em;
   --outer-v-pad          : 2em;
   --inner-h-pad          : 1.25em;
-  --statelist-width      : 9em;
+  --statelist-width      : 12em;
   --statelist-lineheight : 1.25rem;
   --statelist-allgap     : 2.5rem;
   --main-lineheight      : 1.45rem;
@@ -13,7 +13,7 @@
   --main-margin-below-h1 : 1.25rem;
 }
 
-body, html { margin: 0; padding; 0; border: 0; font-family: 'Open Sans', sans-serif; }
+body, html { margin: 0; padding: 0; border: 0; font-family: 'Open Sans', sans-serif; }
 
 h1           { margin: 0; padding: 0; }
 h1+p, h1+div { margin-top: var(--main-margin-below-h1); }
@@ -52,30 +52,35 @@ p+p { margin-top: var(--main-lineheight); }
   max-width : var(--main-width);
 }
 
-#statelist a, #statelist a:visited {
+#statelist a, #statelist a:visited { color : #06f; }
+
+a, a:visited {
   font-family     : 'Open Sans', sans-serif;
-  display         : block;
-  color           : #06f;
   text-decoration : none;
+  color           : #00f;
 }
 
-#statelist a.all {
+#statelist .statebox.all {
   margin-bottom : var(--statelist-allgap);
 }
 
-#statelist a.all.current {
+div#statelist .statebox.all.current {
+  margin-top    : 0;
   margin-bottom : 0;
   padding-top   : 0;
 }
 
-#statelist a.Alabama.current {
+#statelist .statebpx.Alabama.current {
   padding-top   : 0;
 }
 
-div#statelist a.current {
+div#statelist .statebox.current {
+  margin-top  : var(--statelist-lineheight);
+}
+
+div#statelist .statebox a.current {
   font-weight : 700;
   color       : black;
-  padding-top : var(--statelist-lineheight);
 }
 
 .subrow, .subrow li {
@@ -105,7 +110,52 @@ div#statelist a.current {
   border-radius    : 0.5em;
 }
 
+.clean_senators, .clean_representatives {
+  margin-left      : 1em;
+  padding          : 1em;
+  color            : #080;
+  border           : 1px solid #040;
+  border-radius    : 0.33em;
+  background-color : #dfd;
+}
 
+.billboard {
+  margin-top       : 1rem;
+  background-color : #fdd;
+  box-sizing       : border-box;
+  padding          : 1em;
+  border           : 1px solid #fbb;
+  border-radius    : 0.5em;
+  overflow         : auto;
+}
+
+div.billboard>h2 {
+  margin-top  : 0;
+  padding-top : 0;
+  color       : black;
+}
+
+div.billboard>h2 span.name {
+  text-decoration: underline;
+}
+
+.selfie {
+  float         : right;
+  margin-left   : 1em;
+  width         : 15em;
+  clear         : both;
+  border-radius : 0.33em;
+  border        : 1px solid black;
+}
+
+.billboard  ol li+li,
+.this_state ol li+li {
+  margin-top: 1em;
+}
+
+.other_state               { padding-top  : 4rem; }
+.other_state div           { padding-left : 1rem; }
+.other_state .name.senator { font-weight  : 700; }
 
 
 

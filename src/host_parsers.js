@@ -13,9 +13,6 @@ const peg_reps = require('../build/peg_representatives.js'),
 const pegged_reps = peg_reps.parse(reps).filter(r => r.kind !== 'break'),
       pegged_sens = peg_sens.parse(sens).filter(s => s.kind !== 'break');
 
-const ns      = require('./newsite.js'),
-      newsite = ns.newsite;
-
 
 
 function scribe(should_minify, pegged_sens, pegged_reps) {
@@ -32,10 +29,12 @@ function scribe(should_minify, pegged_sens, pegged_reps) {
            ? JSON.stringify(pegged_reps)
            : JSON.stringify(pegged_reps, undefined, 2);
 
-  const senator_claim        = `const pegged_sens${m10sp}=${m1sp}${ps};`,
-        representative_claim = `const pegged_reps${m1sp}=${m1sp}${pr};`;
+  const senator_export        = `${m1sp}senators${m1sp}:${m1sp}${ps}${m1sp}`,
+        representative_export = `${m1sp}representatives${m1sp}:${m1sp}${pr}${m1sp}`,
+        exported              = `senators:${ps},${m1sp}representatives:${pr}`,
+        export_claim          = `module.exports${m1sp}=${m1sp}{${exported}};`;
 
-  return `${mnl}${senator_claim}${mnl}${mnl}${representative_claim}${mnl}${mnl}`;
+  return `${mnl}${export_claim}${mnl}`;
 
 }
 
@@ -48,8 +47,6 @@ console.log(`Senator count        : ${pegged_sens.length}`);
 console.log(`Representative count : ${pegged_reps.length}`);
 
 
-
-fs.writeFileSync('./build/index.html', newsite(pegged_sens, pegged_reps));
 
 
 // JSON.stringify( pegged_sens, undefined, 2 );

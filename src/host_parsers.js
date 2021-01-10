@@ -13,6 +13,9 @@ const peg_reps = require('../build/peg_representatives.js'),
 const pegged_reps = peg_reps.parse(reps).filter(r => r.kind !== 'break'),
       pegged_sens = peg_sens.parse(sens).filter(s => s.kind !== 'break');
 
+const ns      = require('./newsite.js'),
+      newsite = ns.newsite;
+
 
 
 function scribe(should_minify, pegged_sens, pegged_reps) {
@@ -43,6 +46,10 @@ fs.writeFileSync('./build/data.js', scribe(should_minify, pegged_sens, pegged_re
 
 console.log(`Senator count        : ${pegged_sens.length}`);
 console.log(`Representative count : ${pegged_reps.length}`);
+
+
+
+fs.writeFileSync('./build/index.html', newsite(pegged_sens, pegged_reps));
 
 
 // JSON.stringify( pegged_sens, undefined, 2 );

@@ -1,6 +1,6 @@
 {
   "name": "usa.wtf-remake",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Remake of 2600's https://usa.wtf/ with video",
   "main": "index.js",
   "scripts": {

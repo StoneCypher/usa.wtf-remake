@@ -1,4 +1,9 @@
 module.exports = { photos: {
+
+  "Tommy Tuberville": "portraits/tommy_tuberville.jpg",
+  "Jerry Carl": "portraits/jerry_carl.jpg",
+  "Barry Moore": "portraits/barry_moore.jpg",
+
   "Ralph Abraham": "portraits/a000374_200.jpg",
   "Alma Adams": "portraits/a000370_200.jpg",
   "Robert Aderholt": "portraits/a000055_200.jpg",

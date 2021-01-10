@@ -67,12 +67,12 @@ function billboard_senator(this_senator) {
     ${this_senator.office.map(single_office => `
     <li>
       <div>
-        ${single_office.addr.map(a => `<div>${a}</div>`).join('')}
+        ${single_office.addr.map( (a, i) => `<div class="addr addr_${i}">${a}</div>`).join('')}
       </div>${single_office.phone
-        ? single_office.phone.map(p => `<div>Phone: ${p}</div>`).join('')
+        ? single_office.phone.map(p => `<div class="phone">Phone: ${p}</div>`).join('')
         : ''
       }${single_office.fax
-        ? single_office.fax.map(f => `<div>Fax: ${f}</div>`).join('')
+        ? single_office.fax.map(f => `<div class="fax">Fax: ${f}</div>`).join('')
         : ''
       }
     </li>`
@@ -84,7 +84,11 @@ function billboard_senator(this_senator) {
 
 
 function summarize_senator(this_senator) {
-  return `<div>${this_senator.senator} of ${this_senator.state}</div>`;
+  return `<div>
+  <span class="name senator">${this_senator.senator}</span>
+  of
+  <span class="${this_senator.state}">${this_senator.state}</span>
+  </div>`;
 }
 
 
@@ -98,12 +102,12 @@ function billboard_representative(this_representative) {
     ${this_representative.office.map(single_office => `
     <li>
       <div>
-        ${single_office.addr.map(a => `<div>${a}</div>`).join('')}
+        ${single_office.addr.map( (a, i) => `<div class="addr addr_${i}">${a}</div>`).join('')}
       </div>${single_office.phone
-        ? single_office.phone.map(p => `<div>Phone: ${p}</div>`).join('')
+        ? single_office.phone.map(p => `<div class="phone">Phone: ${p}</div>`).join('')
         : ''
       }${single_office.fax
-        ? single_office.fax.map(f => `<div>Fax: ${f}</div>`).join('')
+        ? single_office.fax.map(f => `<div class="fax">Fax: ${f}</div>`).join('')
         : ''
       }
     </li>`
@@ -115,30 +119,49 @@ function billboard_representative(this_representative) {
 
 
 function summarize_representative(this_representative) {
-  return `<div>${this_representative.senator} of ${this_representative.state}</div>`;
+  return `<div>${this_representative.representative} of ${this_representative.state}</div>`;
 }
 
 
 
 function newsite_state(which_state) {
 
+  let prev_state = null;
+
   return preface
        + header
        + prologue
        + sen_header
+       + '<div class="this_state">'
        + data.senators
              .filter(s => s.state === which_state)
              .map(this_sen => billboard_senator(this_sen))
              .join('')
-       + '<div class="other_state">'
+       + '</div><div class="other_state">'
        + data.senators
              .filter(s => s.state !== which_state)
              .map(this_sen => summarize_senator(this_sen))
              .join('')
        + '</div>'
        + rep_header
-       + '<pre>' + JSON.stringify(data.representatives.filter(r => r.state === which_state), undefined, 2) + '</pre>'
-       + '<pre>' + JSON.stringify(data.representatives.filter(r => r.state !== which_state), undefined, 2) + '</pre>'
+       + '<div class="this_state">'
+       + data.representatives
+             .filter(r => r.state === which_state)
+             .map(this_rep => billboard_representative(this_rep))
+             .join('')
+       + '</div><div class="other_state">'
+       + data.representatives
+             .filter(r => r.state !== which_state)
+             .map(this_rep => {
+               let maybe_header = '';
+               if (this_rep.state !== prev_state) {
+                 maybe_header = `<h1>${this_rep.state}</h1>`;
+                 prev_state   = this_rep.state;
+               }
+               return maybe_header + summarize_representative(this_rep);
+             })
+             .join('')
+       + '</div>'
        + postface;
 
 }

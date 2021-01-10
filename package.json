@@ -1,0 +1,19 @@
+{
+  "name": "usa.wtf-remake",
+  "version": "1.0.0",
+  "description": "Remake of 2600's https://usa.wtf/ with video",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StoneCypher/usa.wtf-remake.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StoneCypher/usa.wtf-remake/issues"
+  },
+  "homepage": "https://github.com/StoneCypher/usa.wtf-remake#readme"
+}

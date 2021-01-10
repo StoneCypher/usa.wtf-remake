@@ -15,6 +15,24 @@ const pegged_reps = peg_reps.parse(reps).filter(r => r.kind !== 'break'),
 
 
 
+const state_forcings = {
+  "Ted Cruz"         : "Texas",
+  "Josh Hawley"      : "Missouri",
+  "Cindy Hyde-smith" : "Mississippi",
+  "John Kennedy"     : "Louisiana",
+  "Cynthia Lummis"   : "Wyoming",
+  "Roger Marshall"   : "Kansas",
+  "Rick Scott"       : "Florida",
+  "Tommy Tuberville" : "Alabama"
+};
+
+Object.keys(state_forcings).map(sf => {
+  const idx = pegged_sens.findIndex(pg_sen => pg_sen.senator === sf);
+  pegged_sens[idx].state = state_forcings[sf];
+});
+
+
+
 function scribe(should_minify, pegged_sens, pegged_reps) {
 
   const mnl   = should_minify ? '' : '\n',
